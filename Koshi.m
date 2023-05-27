@@ -1,10 +1,11 @@
-function [res, countF] = Koshi(f, x0, eps, maxIt, ifPrint)
+function [res, countF, trail] = Koshi(f, x0, eps, maxIt)
 x = sym('x', [2 1]);
 s = matlabFunction(simplifyFraction(transpose(jacobian(sym(f(x)), x))), 'Vars', {x});
-deltaCoef = 0.05;
+deltaCoef = 0.05; trail = {x0};
 
 it = 0; iF = 0; x = x0;
 while 1
+    trail{end+1} = x;
     sx = s(x); px = x;
     if norm(sx) < eps(1) || it > maxIt(1)
         break;

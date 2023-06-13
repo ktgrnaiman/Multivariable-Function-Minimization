@@ -7,3 +7,4 @@ for i=1:length(trail)
 end
 plot3(x,y,z,lineStyle(methode), 'LineWidth', LineWidth);
 end
+

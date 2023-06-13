@@ -1,4 +1,4 @@
-function [res, countF, trail] = Koshi(f, x0, eps, maxIt)
+function [res, countF, trail] = Cauchy(f, x0, eps, maxIt)
 x = sym('x', [2 1]);
 s = matlabFunction(simplifyFraction(transpose(jacobian(sym(f(x)), x))), 'Vars', {x});
 deltaCoef = 0.05; trail = {x0};

@@ -6,3 +6,4 @@ for i=1:length(trail)
 end
 plot(x, y, lineStyle(methode), 'LineWidth', LineWidth);
 end
+

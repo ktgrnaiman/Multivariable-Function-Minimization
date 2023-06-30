@@ -1,10 +1,10 @@
 %% Run grid test
-f = @(x) (4*x(1,:)^2 - 2.1*x(1,:)^4 + 1/3*x(1,:)^6 + x(1,:)*x(2,:) - 4*x(2,:)^2 + 4*x(2,:)^4);
+f = @(x) (x(1,:)^2 + x(2,:) - 11)^2 + (x(1,:) + x(2,:)^2 - 7)^2;
 xMinA = [1; 2];
 %Simulation parameters
 eps = [10E-6, 10E-6]; maxIt = [1000, 1000];
 %Grid and initial value
-gridSize = 11; step = [1; 1]; 
+gridSize = 10; step = [1; 1]; 
 x0 = cell(gridSize,gridSize); x0{1,1} = [-5; -5];
 %All metrics
 itRes = zeros(gridSize,gridSize,3); xRes = cell(gridSize,gridSize,3); 
@@ -29,7 +29,7 @@ end
 x = sym('x', [2 1]);
 jF = matlabFunction(simplifyFraction(transpose(jacobian(sym(f(x)), x))), 'Vars', {x});
 h = matlabFunction(simplifyFraction(hessian(sym(f(x)), x)), 'Vars', {x});
-rC = 4;
+rC = 2;
 residual = -1*ones(gridSize, gridSize, 3);
 minimaList = [];
 
@@ -148,7 +148,7 @@ for i=6
         legend("","Cauchy","Newton","Markquardt");
         %Part of 3d plot funcionaluty
         figure('Name','3d');
-        mesh(X, Y, Z); hold on;
+        surf(X, Y, Z); hold on;
         plotTrail3(f, trail{i,j,1},1, lineThickness);
         plotTrail3(f, trail{i,j,2},2, lineThickness);
         plotTrail3(f, trail{i,j,3},3, lineThickness);
@@ -163,12 +163,12 @@ hold on;
 X = x0{1,1}(1):(x0{end,1}(1)-x0{1,1}(1))/100:x0{end,1}(1);
 Y = x0{1,1}(2):(x0{1,end}(2)-x0{1,1}(2))/100:x0{1,end}(2);
 Z = fGrid(f, X, Y);
-L = nonLinspaceEnd(max(max(Z)), minimaList(minAIndex).f, 1.2, plotGridFreq);
+L = nonLinspaceEnd(max(max(Z)), minimaList(minAIndex).f, 1.3, plotGridFreq);
 for i = 1:length(minimaList)
     plot3(minimaList(i).pos(1), minimaList(i).pos(2), minimaList(i).f, '.','MarkerSize', 20, 'Color', [0.8, 0, 0]);
 end
 contourf(X, Y, Z, L, 'LineWidth', 0.5, 'ZLocation', minimaList(minAIndex).f - 1);
-clim([minimaList(minAIndex).f, 5]);
+clim([minimaList(minAIndex).f, 10*sqrt(max(max(Z)))]);
 
 for i = 1:length(minimaList)
     window = figure;   
@@ -176,9 +176,9 @@ for i = 1:length(minimaList)
     X = x0{1,1}(1):(x0{end,1}(1)-x0{1,1}(1))/100:x0{end,1}(1);
     Y = x0{1,1}(2):(x0{1,end}(2)-x0{1,1}(2))/100:x0{1,end}(2);
     Z = fGrid(f, X, Y);
-    L = nonLinspaceEnd(max(max(Z)), minimaList(minAIndex).f, 1.2, plotGridFreq);
+    L = nonLinspaceEnd(max(max(Z)), minimaList(minAIndex).f, 1.2, plotGridFreq); 
     contourf(X, Y, Z, L, 'LineWidth', 0.3, 'ZLocation', minimaList(minAIndex).f - 1);
-    clim([minimaList(minAIndex).f, 5]);
+    clim([minimaList(minAIndex).f, 10*sqrt(max(max(Z)))]);
     for j = 1:length(minimaList(i).trail)
         for z = 1:3
             if minimaList(i).trail(j).alg(z) == 1
@@ -188,6 +188,7 @@ for i = 1:length(minimaList)
         end
     end
     plot(minimaList(i).pos(1), minimaList(i).pos(2), '.', 'MarkerSize', 20, 'Color', [1, 1, 1]);
+    axis([x0{1,1}(1) x0{end,1}(1) x0{1,1}(2) x0{1,end}(2)]);
     if i == minAIndex
         window.Name = 'Absolute';
     end
